@@ -20,8 +20,8 @@ export class User {
   @Column({ type: 'varchar' })
   password: string
 
-  @Column({ type: 'text', array: true, default: ['user'] })
-  @Field(() => String)
+  @Column({ type: 'varchar', array: true, default: ['user'] })
+  @Field(() => [String])
   roles: string[]
 
   @Column({ type: 'boolean', default: true })
