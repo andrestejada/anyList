@@ -27,6 +27,7 @@ type Query {
   getOneItem(id: ID!): Item!
   users: [User!]!
   user(id: ID!): User!
+  revalidateToken: AuthResponse!
 }
 
 type Mutation {
@@ -35,6 +36,7 @@ type Mutation {
   removeItem(id: ID!): Item!
   blockUser(id: ID!): User!
   singup(signUpInput: SignUpInput!): AuthResponse!
+  singin(loginInput: LoginInput!): AuthResponse!
 }
 
 input CreateItemInput {
@@ -53,5 +55,10 @@ input UpdateItemInput {
 input SignUpInput {
   email: String!
   fullName: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
   password: String!
 }
