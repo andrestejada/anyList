@@ -2,7 +2,7 @@ import { ApolloDriverConfig } from '@nestjs/apollo'
 import { ApolloDriver } from '@nestjs/apollo'
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
-import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core'
+import { ApolloServerPluginInlineTrace, ApolloServerPluginLandingPageLocalDefault  } from 'apollo-server-core'
 import { join } from 'path'
 import { ItemsResolver } from './items/items.resolver'
 import { ItemsModule } from './items/items.module'
@@ -21,7 +21,7 @@ import { AuthModule } from './auth/auth.module';
       debug: false,
       playground: false,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      plugins: [ApolloServerPluginLandingPageLocalDefault(),ApolloServerPluginInlineTrace()],
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',

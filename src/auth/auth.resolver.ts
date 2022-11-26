@@ -5,6 +5,9 @@ import { SignUpInput } from './dto/sigup.input';
 import { JwtGuard } from './guards/jwt-auth.guard';
 import { AuthResponse } from './types/auth-response';
 import { UseGuards } from '@nestjs/common';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from 'src/users/entities/user.entity';
+import { ValidRoles } from './enums/valid-roles.enum';
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
@@ -16,12 +19,12 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse, { name: 'singin' })
   login(@Args('loginInput') loginInput: LoginInput): Promise<AuthResponse> {
-    return this.authService.login(loginInput)
+    return this.authService.login(loginInput);
   }
 
   @UseGuards(JwtGuard)
-  @Query(()=>AuthResponse,{name:'revalidateToken'})
-  revalidateToken() {
-    this.authService.revalidateToken()
+  @Query(() => AuthResponse, { name: 'revalidateToken' })
+  revalidateToken(@CurrentUser([ValidRoles.admin]) user: User) {
+    return this.authService.revalidateToken(user);
   }
 }

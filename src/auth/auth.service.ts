@@ -5,6 +5,7 @@ import { AuthResponse } from './types/auth-response';
 import { LoginInput } from './dto/login.input';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { User } from 'src/users/entities/user.entity';
 @Injectable()
 export class AuthService {
   constructor(private usersService: UsersService,private jwtService:JwtService) {}
@@ -42,8 +43,14 @@ export class AuthService {
     };
   }
 
-  async revalidateToken(){
-    return 'valid'
+  revalidateToken(user:User):AuthResponse{
+    const token = this.jwtService.sign({
+      id:user.id
+    })
+    return {
+      token,
+      user
+    }
   }
 
   async validateUser(id:string){
