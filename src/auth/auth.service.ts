@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, BadGatewayException } from '@nestjs/common';
 import { SignUpInput } from './dto/sigup.input';
 import { UsersService } from '../users/users.service';
 import { AuthResponse } from './types/auth-response';
@@ -23,7 +23,9 @@ export class AuthService {
 
   async login(loginInput: LoginInput): Promise<AuthResponse> {
     const user = await this.usersService.findOneByEmail(loginInput.email);
-    
+    if(!user){
+      throw new BadGatewayException('user does not found')
+    }
     const isValidPassword = await bcrypt.compare(
       loginInput.password,
       user.password,

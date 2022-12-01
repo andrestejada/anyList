@@ -6,6 +6,7 @@ import { CreateUserInput } from './dto/create-user.input';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { ValidRoles } from '../auth/enums/valid-roles.enum';
 @Injectable()
 export class UsersService {
   constructor(
@@ -13,7 +14,10 @@ export class UsersService {
   ) {}
 
   async create(createUserInput: SignUpInput) {
-    await this.findOneByEmail(createUserInput.email);
+    const userFound = await this.findOneByEmail(createUserInput.email);
+    if (userFound) {
+      throw new BadRequestException('user already exist');
+    }
     const user = this.userRepository.create({
       ...createUserInput,
       password: bcrypt.hashSync(createUserInput.password, 10),
@@ -22,25 +26,32 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
-  findAll() {
-    return this.userRepository.find();
+  findAll(roles: ValidRoles[]) {
+    if (roles.length === 0) {
+      return this.userRepository.find();
+    }
+    return this.userRepository
+      .createQueryBuilder('user')
+      .andWhere('ARRAY[roles]::varchar[] && ARRAY[:...roles]::varchar[]')
+      .setParameter('roles', roles)
+      .getMany();
   }
 
   findOne(id: string) {
-    return '';
+    return this.findOneById(id)
   }
 
   async findOneByEmail(email: string) {
     const user = await this.userRepository.findOneBy({ email });
-    if(!user){
-      throw new BadRequestException('the email does not exist')
-    }
+    // if (!user) {
+    //   throw new BadRequestException('the email does not exist');
+    // }
     return user;
   }
   async findOneById(id: string) {
     const user = await this.userRepository.findOneBy({ id });
-    if(!user){
-      throw new BadRequestException('the email does not exist')
+    if (!user) {
+      throw new BadRequestException('the email does not exist');
     }
     return user;
   }
