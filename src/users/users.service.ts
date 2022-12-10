@@ -38,7 +38,7 @@ export class UsersService {
   }
 
   findOne(id: string) {
-    return this.findOneById(id)
+    return this.findOneById(id);
   }
 
   async findOneByEmail(email: string) {
@@ -56,14 +56,19 @@ export class UsersService {
     return user;
   }
 
-  update(id: number, updateUserInput: UpdateUserInput) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserInput: UpdateUserInput, updateBy: User) {
+    const userToUpdate = await this.userRepository.preload(updateUserInput);
+    if (!userToUpdate) {
+      throw new BadRequestException('the user with that id does not exist');
+    }
+    userToUpdate.lastUpdatedUser = updateBy;
+    return await this.userRepository.save(userToUpdate);
   }
 
-  async block(id: string,adminUser:User) {
-    const userToBlock = await this.findOneById(id)
-    userToBlock.isActive = false
-    userToBlock.lastUpdatedUser = adminUser
+  async block(id: string, adminUser: User) {
+    const userToBlock = await this.findOneById(id);
+    userToBlock.isActive = false;
+    userToBlock.lastUpdatedUser = adminUser;
     return this.userRepository.save(userToBlock);
   }
 }

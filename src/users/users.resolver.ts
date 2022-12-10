@@ -34,6 +34,14 @@ export class UsersResolver {
     @Args('blockUserId', { type: () => ID }) id: string,
     @CurrentUser([ValidRoles.superUser]) user: User,
   ) {
-    return this.usersService.block(id,user);
+    return this.usersService.block(id, user);
+  }
+
+  @Mutation(() => User, { name: 'updateUser' })
+  updateUser(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @CurrentUser([ValidRoles.superUser]) user: User,
+  ) {
+    return this.usersService.update(updateUserInput.id, updateUserInput , user);
   }
 }
