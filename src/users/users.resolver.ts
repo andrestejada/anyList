@@ -23,14 +23,17 @@ export class UsersResolver {
 
   @Query(() => User, { name: 'user' })
   findOne(
-    @Args('id', { type: () => ID },ParseUUIDPipe) id: string,
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
     @CurrentUser([ValidRoles.superUser]) user: User,
   ) {
     return this.usersService.findOne(id);
   }
 
   @Mutation(() => User, { name: 'blockUser' })
-  blockUser(@Args('id', { type: () => ID }) id: string) {
-    return this.usersService.block(id);
+  blockUser(
+    @Args('blockUserId', { type: () => ID }) id: string,
+    @CurrentUser([ValidRoles.superUser]) user: User,
+  ) {
+    return this.usersService.block(id,user);
   }
 }

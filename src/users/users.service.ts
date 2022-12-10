@@ -60,7 +60,10 @@ export class UsersService {
     return `This action updates a #${id} user`;
   }
 
-  block(id: string) {
-    return `This action removes a #${id} user`;
+  async block(id: string,adminUser:User) {
+    const userToBlock = await this.findOneById(id)
+    userToBlock.isActive = false
+    userToBlock.lastUpdatedUser = adminUser
+    return this.userRepository.save(userToBlock);
   }
 }
