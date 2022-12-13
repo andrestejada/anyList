@@ -16,6 +16,7 @@ type Item {
   id: ID!
   name: String!
   quantityUnits: String
+  user: User!
 }
 
 type AuthResponse {
