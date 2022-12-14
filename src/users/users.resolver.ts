@@ -1,4 +1,13 @@
-import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ID,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserInput } from './dto/create-user.input';
@@ -8,10 +17,14 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
 import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { JwtGuard } from '../auth/guards/jwt-auth.guard';
+import { ItemsService } from '../items/items.service';
 @UseGuards(JwtGuard)
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private ItemsService: ItemsService,
+  ) {}
 
   @Query(() => [User], { name: 'users' })
   findAll(
@@ -42,6 +55,11 @@ export class UsersResolver {
     @Args('updateUserInput') updateUserInput: UpdateUserInput,
     @CurrentUser([ValidRoles.superUser]) user: User,
   ) {
-    return this.usersService.update(updateUserInput.id, updateUserInput , user);
+    return this.usersService.update(updateUserInput.id, updateUserInput, user);
+  }
+
+  @ResolveField(() => Int, { name: 'itemCount' })
+  itemCount(@Parent() user: User) {
+    return this.ItemsService.countItemsByUser(user);
   }
 }

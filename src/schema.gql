@@ -10,6 +10,7 @@ type User {
   isActive: Boolean!
   lastUpdatedUser: User
   item: [Item!]!
+  itemCount: Int!
 }
 
 type Item {
