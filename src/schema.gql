@@ -26,7 +26,7 @@ type AuthResponse {
 }
 
 type Query {
-  getAllItems: [Item!]!
+  getAllItems(offset: Int = 0, limit: Int = 10): [Item!]!
   getOneItem(id: ID!): Item!
   users(roles: [ValidRoles!] = []): [User!]!
   user(id: ID!): User!

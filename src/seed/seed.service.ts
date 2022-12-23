@@ -29,12 +29,15 @@ export class SeedService {
     for (const user of SEED_USERS) {
       users.push(await this.usersService.create(user));
     }
+    //retornamos todos los usuarios que se crearon
     return users;
   }
+
   async loadItems(users: User[]) {
     const itemsPromise = [];
     let counter = 0;
     for (const item of SEED_ITEMS) {
+      //cuando el contador llegue a la logitud de los usuarios se reiniciara 
       if (counter >= SEED_USERS.length) {
         counter = 0;
       }
@@ -42,8 +45,8 @@ export class SeedService {
       counter++;
     }
     
-    const res = await Promise.all(itemsPromise);
-    console.log(res)
+    await Promise.all(itemsPromise);
+    
   }
   async deleteDataBase() {
     await this.itemRepository.createQueryBuilder().delete().where({}).execute();

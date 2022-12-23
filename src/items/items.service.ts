@@ -5,6 +5,7 @@ import { CreateItemInput } from './dto/create-item.input';
 import { UpdateItemInput } from './dto/update-item.input';
 import { Item } from './entities/item.entity';
 import { User } from '../users/entities/user.entity';
+import { PaginationArgs } from '../common/dto/arg/pagination.args';
 
 @Injectable()
 export class ItemsService {
@@ -18,9 +19,10 @@ export class ItemsService {
     return newItem;
   }
 
-  async findAll(user: User) {
-    console.log(user);
+  async findAll(user: User ,paginationArgs: PaginationArgs) {
     return this.itemRepository.find({
+      take:paginationArgs.limit,
+      skip:paginationArgs.offset,
       where: {
         user: {
           id: user.id,
